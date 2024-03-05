@@ -1,50 +1,66 @@
 package com.example.appinstagram.model;
 
-public class Feed {
+/**
+ *
+ */
+public class Feed
+{
 
     private String id, fotoPostagem, descricao;
     private String nomeUsuario, fotoUsuario;
 
-    public Feed() {
+    public Feed()
+    {
+
     }
 
-    public String getId() {
+    public String getId()
+    {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(String id)
+    {
         this.id = id;
     }
 
-    public String getFotoPostagem() {
+    public String getFotoPostagem()
+    {
         return fotoPostagem;
     }
 
-    public void setFotoPostagem(String fotoPostagem) {
+    public void setFotoPostagem(String fotoPostagem)
+    {
         this.fotoPostagem = fotoPostagem;
     }
 
-    public String getDescricao() {
+    public String getDescricao()
+    {
         return descricao;
     }
 
-    public void setDescricao(String descricao) {
+    public void setDescricao(String descricao)
+    {
         this.descricao = descricao;
     }
 
-    public String getNomeUsuario() {
+    public String getNomeUsuario()
+    {
         return nomeUsuario;
     }
 
-    public void setNomeUsuario(String nomeUsuario) {
+    public void setNomeUsuario(String nomeUsuario)
+    {
         this.nomeUsuario = nomeUsuario;
     }
 
-    public String getFotoUsuario() {
+    public String getFotoUsuario()
+    {
         return fotoUsuario;
     }
 
-    public void setFotoUsuario(String fotoUsuario) {
+    public void setFotoUsuario(String fotoUsuario)
+    {
         this.fotoUsuario = fotoUsuario;
     }
 }
