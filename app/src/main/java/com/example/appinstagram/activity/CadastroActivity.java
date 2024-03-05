@@ -51,36 +51,39 @@ public class CadastroActivity extends AppCompatActivity
 
         this.campoUsuario   .requestFocus();
         this.progressBar    .setVisibility(View.GONE);
-        this.buttonCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
+        this.buttonCadastrar.setOnClickListener(
+            new View.OnClickListener()
             {
-                String nome  = campoUsuario.getText().toString();
-                String email = campoEmail  .getText().toString();
-                String senha = campoSenha  .getText().toString();
-
-                if ( nome.isEmpty() || email.isEmpty() || senha.isEmpty() )
+                @Override
+                public void onClick(View v)
                 {
-                    Toast
-                        .makeText(
-                            getApplicationContext(),
-                            "Preencha todos os campos.",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show();
-                }
-                else
-                {
-                    usuario = new Usuario();
+                    String nome  = campoUsuario.getText().toString();
+                    String email = campoEmail  .getText().toString();
+                    String senha = campoSenha  .getText().toString();
 
-                    usuario.setNome(nome);
-                    usuario.setEmail(email);
-                    usuario.setSenha(senha);
+                    if ( nome.isEmpty() || email.isEmpty() || senha.isEmpty() )
+                    {
+                        Toast
+                            .makeText(
+                                getApplicationContext(),
+                                "Preencha todos os campos.",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show();
+                    }
+                    else
+                    {
+                        usuario = new Usuario();
 
-                    cadastrar(usuario);
+                        usuario.setNome(nome);
+                        usuario.setEmail(email);
+                        usuario.setSenha(senha);
+
+                        cadastrar(usuario);
+                    }
                 }
             }
-        });
+        );
     }
 
     public void cadastrar(Usuario usuario)
@@ -94,7 +97,8 @@ public class CadastroActivity extends AppCompatActivity
                 .createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnCompleteListener(
                     this,
-                    new OnCompleteListener<AuthResult>() {
+                    new OnCompleteListener<AuthResult>()
+                    {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task)
                         {
@@ -146,6 +150,7 @@ public class CadastroActivity extends AppCompatActivity
                                     e.printStackTrace();
                                 }
                             }
+
                             Toast
                                 .makeText(
                                     getApplicationContext(),
@@ -209,6 +214,7 @@ public class CadastroActivity extends AppCompatActivity
                                 e.printStackTrace();
                             }
                         }
+
                         Toast
                             .makeText(
                                 getApplicationContext(),
