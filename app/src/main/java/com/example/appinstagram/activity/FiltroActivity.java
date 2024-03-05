@@ -132,7 +132,8 @@ public class FiltroActivity extends AppCompatActivity
                 new RecyclerItemClickListener(
                     getApplicationContext(),
                     recyclerFiltros,
-                    new RecyclerItemClickListener.OnItemClickListener() {
+                    new RecyclerItemClickListener.OnItemClickListener()
+                    {
                         @Override
                         public void onItemClick(View view, int position)
                         {
@@ -195,7 +196,8 @@ public class FiltroActivity extends AppCompatActivity
         usuarioLogadoRef = usuarioRef.child(idUsuarioLogado);
 
         usuarioLogadoRef.addListenerForSingleValueEvent(
-            new ValueEventListener() {
+            new ValueEventListener()
+            {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                 {
@@ -206,7 +208,8 @@ public class FiltroActivity extends AppCompatActivity
                         .child(idUsuarioLogado);
 
                     seguidoresRef.addListenerForSingleValueEvent(
-                        new ValueEventListener() {
+                        new ValueEventListener()
+                        {
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                             {
@@ -250,6 +253,7 @@ public class FiltroActivity extends AppCompatActivity
         item.filterName    = "Normal";
 
         ThumbnailsManager.addThumb(item);
+
         List<Filter> filters = FilterPack.getFilterPack(getApplicationContext());
 
         for ( Filter filter : filters )
@@ -314,52 +318,62 @@ public class FiltroActivity extends AppCompatActivity
 
         UploadTask uploadTask = imagemRef.putBytes(dadosImg);
 
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e)
-            {
-                Toast
-                    .makeText(
-                        FiltroActivity.this,
-                        "Erro ao salvar a Imagem, tente novamente.",
-                        Toast.LENGTH_SHORT
-                    )
-                    .show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
-            {
-                imagemRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+        uploadTask
+            .addOnFailureListener(
+                new OnFailureListener()
+                {
                     @Override
-                    public void onComplete(@NonNull Task<Uri> task)
+                    public void onFailure(@NonNull Exception e)
                     {
-                        Uri url = task.getResult();
-
-                        postagem.setCaminhoFoto(url.toString());
-
-                        int qtdePostagens = usuarioLogado.getPostagens() + 1;
-
-                        usuarioLogado.setPostagens(qtdePostagens);
-                        usuarioLogado.atualizarQtdePostagens();
-
-                        if ( postagem.salvar(seguidoresSnapShot) )
-                        {
-                            Toast
-                                .makeText(
-                                    FiltroActivity.this,
-                                    "Sucesso ao salvar postagem.",
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show();
-
-                            dialog.cancel();
-
-                            finish();
-                        }
+                        Toast
+                            .makeText(
+                                FiltroActivity.this,
+                                "Erro ao salvar a Imagem, tente novamente.",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show();
                     }
-                });
-            }
-        });
+                }
+            ).addOnSuccessListener(
+                new OnSuccessListener<UploadTask.TaskSnapshot>()
+                {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                    {
+                        imagemRef.getDownloadUrl().addOnCompleteListener(
+                            new OnCompleteListener<Uri>()
+                            {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task)
+                                {
+                                    Uri url = task.getResult();
+
+                                    postagem.setCaminhoFoto(url.toString());
+
+                                    int qtdePostagens = usuarioLogado.getPostagens() + 1;
+
+                                    usuarioLogado.setPostagens(qtdePostagens);
+                                    usuarioLogado.atualizarQtdePostagens();
+
+                                    if ( postagem.salvar(seguidoresSnapShot) )
+                                    {
+                                        Toast
+                                            .makeText(
+                                                FiltroActivity.this,
+                                                "Sucesso ao salvar postagem.",
+                                                Toast.LENGTH_SHORT
+                                            )
+                                            .show();
+
+                                        dialog.cancel();
+
+                                        finish();
+                                    }
+                                }
+                            }
+                        );
+                    }
+                }
+            );
     }
 }

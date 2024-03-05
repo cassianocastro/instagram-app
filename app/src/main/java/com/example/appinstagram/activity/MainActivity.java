@@ -78,32 +78,35 @@ public class MainActivity extends AppCompatActivity
 
     private void habilitNavigation(BottomNavigationViewEx viewEx)
     {
-        viewEx.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item)
+        viewEx.setOnNavigationItemSelectedListener(
+            new BottomNavigationView.OnNavigationItemSelectedListener()
             {
-                FragmentManager fragment = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragment.beginTransaction();
-
-                switch ( item.getItemId() )
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item)
                 {
-                    case R.id.ic_home:
-                        fragmentTransaction.replace(R.id.viewPager, new FeedFragment()).commit();
-                        return true;
-                    case R.id.ic_pesquisa:
-                        fragmentTransaction.replace(R.id.viewPager, new PesquisaFragment()).commit();
-                        return true;
-                    case R.id.ic_postagem:
-                        fragmentTransaction.replace(R.id.viewPager, new PostagemFragment()).commit();
-                        return true;
-                    case R.id.ic_perfil:
-                        fragmentTransaction.replace(R.id.viewPager, new PerfilFragment()).commit();
-                        return true;
-                }
+                    FragmentManager fragment = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragment.beginTransaction();
 
-                return false;
+                    switch ( item.getItemId() )
+                    {
+                        case R.id.ic_home:
+                            fragmentTransaction.replace(R.id.viewPager, new FeedFragment()).commit();
+                            return true;
+                        case R.id.ic_pesquisa:
+                            fragmentTransaction.replace(R.id.viewPager, new PesquisaFragment()).commit();
+                            return true;
+                        case R.id.ic_postagem:
+                            fragmentTransaction.replace(R.id.viewPager, new PostagemFragment()).commit();
+                            return true;
+                        case R.id.ic_perfil:
+                            fragmentTransaction.replace(R.id.viewPager, new PerfilFragment()).commit();
+                            return true;
+                    }
+
+                    return false;
+                }
             }
-        });
+        );
     }
 
     @Override

@@ -119,7 +119,8 @@ public class PerfilAmigoActivity extends AppCompatActivity
         carregarFotosPostagem();
 
         gridViewPerfil.setOnItemClickListener(
-            new AdapterView.OnItemClickListener() {
+            new AdapterView.OnItemClickListener()
+            {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
@@ -166,7 +167,8 @@ public class PerfilAmigoActivity extends AppCompatActivity
         usuarioAmigoRef = usuarioRef.child(usuarioSelecionado.getId());
 
         valueEventListenerPerfilAmigo = usuarioAmigoRef.addValueEventListener(
-            new ValueEventListener() {
+            new ValueEventListener()
+            {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                 {
@@ -208,7 +210,8 @@ public class PerfilAmigoActivity extends AppCompatActivity
         postagens = new ArrayList<>();
 
         postagensUsuarioRef.addListenerForSingleValueEvent(
-            new ValueEventListener() {
+            new ValueEventListener()
+            {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                 {
@@ -252,7 +255,8 @@ public class PerfilAmigoActivity extends AppCompatActivity
         usuarioLogadoRef = usuarioRef.child(idUsuarioLogado);
 
         usuarioLogadoRef.addListenerForSingleValueEvent(
-            new ValueEventListener() {
+            new ValueEventListener()
+            {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                 {
@@ -277,11 +281,12 @@ public class PerfilAmigoActivity extends AppCompatActivity
             .child(idUsuarioLogado);
 
         seguidorRef.addListenerForSingleValueEvent(
-            new ValueEventListener() {
+            new ValueEventListener()
+            {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
                 {
-                    if (snapshot.exists())
+                    if ( snapshot.exists() )
                     {
                         habilitaButtonSeguir(true);
                     }
@@ -309,13 +314,16 @@ public class PerfilAmigoActivity extends AppCompatActivity
         else
         {
             buttonAcaoPerfil.setText("Seguir");
-            buttonAcaoPerfil.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v)
+            buttonAcaoPerfil.setOnClickListener(
+                new View.OnClickListener()
                 {
-                    salvarSeguidor(usuarioLogado, usuarioSelecionado);
+                    @Override
+                    public void onClick(View v)
+                    {
+                        salvarSeguidor(usuarioLogado, usuarioSelecionado);
+                    }
                 }
-            });
+            );
         }
     }
 

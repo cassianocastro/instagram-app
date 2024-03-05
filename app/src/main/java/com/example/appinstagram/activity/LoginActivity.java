@@ -51,34 +51,37 @@ public class LoginActivity extends AppCompatActivity
 
         this.campoEmail  .requestFocus();
         this.progressBar .setVisibility(View.GONE);
-        this.buttonEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
+        this.buttonEntrar.setOnClickListener(
+            new View.OnClickListener()
             {
-                String email = campoEmail.getText().toString();
-                String senha = campoSenha.getText().toString();
-
-                if ( email.isEmpty() || senha.isEmpty() )
+                @Override
+                public void onClick(View v)
                 {
-                    Toast
-                        .makeText(
-                            getApplicationContext(),
-                            "Preencha todos os campos.",
-                            Toast.LENGTH_SHORT
-                        )
-                        .show();
-                }
-                else
-                {
-                    usuario = new Usuario();
+                    String email = campoEmail.getText().toString();
+                    String senha = campoSenha.getText().toString();
 
-                    usuario.setEmail(email);
-                    usuario.setSenha(senha);
+                    if ( email.isEmpty() || senha.isEmpty() )
+                    {
+                        Toast
+                            .makeText(
+                                getApplicationContext(),
+                                "Preencha todos os campos.",
+                                Toast.LENGTH_SHORT
+                            )
+                            .show();
+                    }
+                    else
+                    {
+                        usuario = new Usuario();
 
-                    validarLoginDeste(usuario);
+                        usuario.setEmail(email);
+                        usuario.setSenha(senha);
+
+                        validarLoginDeste(usuario);
+                    }
                 }
             }
-        });
+        );
     }
 
     public void userIsLogged()
@@ -108,7 +111,8 @@ public class LoginActivity extends AppCompatActivity
         this.auth
             .signInWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
             .addOnCompleteListener(
-                new OnCompleteListener<AuthResult>() {
+                new OnCompleteListener<AuthResult>()
+                {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task)
                     {
