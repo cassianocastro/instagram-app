@@ -36,10 +36,10 @@ import java.io.ByteArrayOutputStream;
 public class PostagemFragment extends Fragment
 {
 
-    private Button buttonAbrirGaleria, buttonAbrirCamera;
+    static private final int SELECAO_GALERIA = 200;
+    static private final int SELECAO_CAMERA = 100;
 
-    private static final int SELECAO_GALERIA = 200;
-    private static final int SELECAO_CAMERA = 100;
+    private Button buttonAbrirGaleria, buttonAbrirCamera;
 
     private String[] permissoes_necessarias = new String[]
     {

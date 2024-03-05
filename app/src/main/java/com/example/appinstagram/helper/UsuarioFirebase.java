@@ -18,19 +18,19 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class UsuarioFirebase
 {
 
-    public static FirebaseUser getCurrentUser()
+    static public FirebaseUser getCurrentUser()
     {
         FirebaseAuth usuario = ConfigFireBase.getFireBaseAuth();
 
         return usuario.getCurrentUser();
     }
 
-    public static String getID()
+    static public String getID()
     {
         return getCurrentUser().getUid();
     }
 
-    public static void atualizarNomeUsuario(String nome)
+    static public void atualizarNomeUsuario(String nome)
     {
         try
         {
@@ -63,7 +63,7 @@ public class UsuarioFirebase
         }
     }
 
-    public static void atualizarFotoUsuario(Uri url)
+    static public void atualizarFotoUsuario(Uri url)
     {
         try
         {
@@ -96,7 +96,7 @@ public class UsuarioFirebase
         }
     }
 
-    public static Usuario getDadosUserLogged()
+    static public Usuario getDadosUserLogged()
     {
         FirebaseUser firebaseUser = getCurrentUser();
 

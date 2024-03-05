@@ -12,11 +12,11 @@ import com.google.firebase.storage.StorageReference;
 public class ConfigFireBase
 {
 
-    private static DatabaseReference reference;
-    private static FirebaseAuth auth;
-    private static StorageReference storage;
+    static private DatabaseReference reference;
+    static private FirebaseAuth auth;
+    static private StorageReference storage;
 
-    public static FirebaseAuth getFireBaseAuth()
+    static public FirebaseAuth getFireBaseAuth()
     {
         if ( auth == null )
         {
@@ -26,7 +26,7 @@ public class ConfigFireBase
         return auth;
     }
 
-    public static DatabaseReference getFireBaseDataBase()
+    static public DatabaseReference getFireBaseDataBase()
     {
         if ( reference == null )
         {
@@ -36,7 +36,7 @@ public class ConfigFireBase
         return reference;
     }
 
-    public static StorageReference getStorage()
+    static public StorageReference getStorage()
     {
         if ( storage == null )
         {
