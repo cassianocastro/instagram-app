@@ -49,9 +49,14 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FiltroActivity extends AppCompatActivity {
+/**
+ *
+ */
+public class FiltroActivity extends AppCompatActivity
+{
 
-    static {
+    static
+    {
         System.loadLibrary("NativeImageProcessor");
     }
 
@@ -62,7 +67,7 @@ public class FiltroActivity extends AppCompatActivity {
     private String idUsuarioLogado;
     private TextInputEditText textDescricaoFiltro;
     private Usuario usuarioLogado;
-    //private ProgressBar progressBar;
+    // private ProgressBar progressBar;
     private boolean estaCarregando;
 
     private RecyclerView recyclerFiltros;
@@ -76,12 +81,16 @@ public class FiltroActivity extends AppCompatActivity {
     private AlertDialog dialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_filtro);
 
         Toolbar t = findViewById(R.id.toolbarPrincipal);
+
         t.setTitle("Filtros");
+
         setSupportActionBar(t);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_close_24);
@@ -94,69 +103,83 @@ public class FiltroActivity extends AppCompatActivity {
         imageFotoEscolhida  = findViewById(R.id.imageFotoEscolhida);
         recyclerFiltros     = findViewById(R.id.recyclerFiltros);
         textDescricaoFiltro = findViewById(R.id.textDescricaoFiltro);
-        //progressBar         = findViewById(R.id.progressFiltro);
+        // progressBar         = findViewById(R.id.progressFiltro);
 
         recuperarDadosPostagem();
 
-        Bundle bundle       = getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
 
-        if (bundle != null){
+        if ( bundle != null )
+        {
             byte[] dadosImg = bundle.getByteArray("fotoEscolhida");
-            imagem          = BitmapFactory.decodeByteArray(dadosImg, 0, dadosImg.length);
+
+            imagem       = BitmapFactory.decodeByteArray(dadosImg, 0, dadosImg.length);
             imageFotoEscolhida.setImageBitmap(imagem);
-            imagemFiltro    = imagem.copy(imagem.getConfig(), true);
+            imagemFiltro = imagem.copy(imagem.getConfig(), true);
 
             adapterMiniaturas = new AdapterMiniaturas(listaFiltros, getApplicationContext());
+
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
-                    this,
-                    LinearLayoutManager.HORIZONTAL,
-                    false
+                this,
+                LinearLayoutManager.HORIZONTAL,
+                false
             );
+
             recyclerFiltros.setLayoutManager(layoutManager);
             recyclerFiltros.setAdapter(adapterMiniaturas);
 
             recyclerFiltros.addOnItemTouchListener(
-                    new RecyclerItemClickListener(
-                            getApplicationContext(),
-                            recyclerFiltros,
-                            new RecyclerItemClickListener.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    ThumbnailItem item = listaFiltros.get(position);
-                                    imagemFiltro       = imagem.copy(imagem.getConfig(), true);
-                                    Filter filter      = item.filter;
-                                    imageFotoEscolhida.setImageBitmap(filter.processFilter(imagemFiltro));
-                                }
+                new RecyclerItemClickListener(
+                    getApplicationContext(),
+                    recyclerFiltros,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position)
+                        {
+                            ThumbnailItem item = listaFiltros.get(position);
+                            imagemFiltro       = imagem.copy(imagem.getConfig(), true);
 
-                                @Override
-                                public void onLongItemClick(View view, int position) {
+                            Filter filter      = item.filter;
+                            imageFotoEscolhida.setImageBitmap(filter.processFilter(imagemFiltro));
+                        }
 
-                                }
+                        @Override
+                        public void onLongItemClick(View view, int position)
+                        {
 
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        }
 
-                                }
-                            }
-                    )
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+
+                        }
+                    }
+                )
             );
+
             recuperarFiltros();
         }
     }
 
-//    private void carregando(boolean estado){
-//        if(estado){
-//            estaCarregando = true;
-//            //progressBar.setVisibility(View.VISIBLE);
-//        }else{
-//            estaCarregando = false;
-//            //progressBar.setVisibility(View.GONE);
-//        }
-//
-//    }
+    // private void carregando(boolean estado)
+    // {
+    //     if ( estado )
+    //     {
+    //         estaCarregando = true;
+    //         // progressBar.setVisibility(View.VISIBLE);
+    //     }
+    //     else
+    //     {
+    //         estaCarregando = false;
+    //         // progressBar.setVisibility(View.GONE);
+    //     }
+    // }
 
-    private void abrirDialogCarregamento(String titulo){
+    private void abrirDialogCarregamento(String titulo)
+    {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
         alert.setTitle(titulo);
         alert.setCancelable(false);
         alert.setView(R.layout.carregamento);
@@ -165,52 +188,60 @@ public class FiltroActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void recuperarDadosPostagem(){
-
+    private void recuperarDadosPostagem()
+    {
         abrirDialogCarregamento("Carregando dados, aguarde!");
+
         usuarioLogadoRef = usuarioRef.child(idUsuarioLogado);
+
         usuarioLogadoRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        usuarioLogado = snapshot.getValue(Usuario.class);
+            new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                {
+                    usuarioLogado = snapshot.getValue(Usuario.class);
 
-                        DatabaseReference seguidoresRef = firebaseRef
-                                .child("seguidores")
-                                .child(idUsuarioLogado);
-                        seguidoresRef.addListenerForSingleValueEvent(
-                                new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                        seguidoresSnapShot = snapshot;
-                                        dialog.cancel();
-                                    }
+                    DatabaseReference seguidoresRef = firebaseRef
+                        .child("seguidores")
+                        .child(idUsuarioLogado);
 
-                                    @Override
-                                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    seguidoresRef.addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                            {
+                                seguidoresSnapShot = snapshot;
+                                dialog.cancel();
+                            }
 
-                                    }
-                                }
-                        );
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error)
+                            {
 
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                    }
+                            }
+                        }
+                    );
                 }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error)
+                {
+
+                }
+            }
         );
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public boolean onSupportNavigateUp()
+    {
         finish();
+
         return false;
     }
 
-    private void recuperarFiltros(){
+    private void recuperarFiltros()
+    {
         ThumbnailsManager.clearThumbs();
         listaFiltros.clear();
 
@@ -221,91 +252,113 @@ public class FiltroActivity extends AppCompatActivity {
         ThumbnailsManager.addThumb(item);
         List<Filter> filters = FilterPack.getFilterPack(getApplicationContext());
 
-        for (Filter filter : filters) {
+        for ( Filter filter : filters )
+        {
             ThumbnailItem itemFiltro = new ThumbnailItem();
+
             itemFiltro.image      = imagem;
             itemFiltro.filter     = filter;
             itemFiltro.filterName = filter.getName();
+
             ThumbnailsManager.addThumb(itemFiltro);
         }
+
         listaFiltros.addAll(ThumbnailsManager.processThumbs(getApplicationContext()));
         adapterMiniaturas.notifyDataSetChanged();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
+
         inflater.inflate(R.menu.menu_filtro, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        switch ( item.getItemId() )
+        {
             case R.id.ic_salvar_postagem:
                 publicarPostagem();
                 break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void publicarPostagem() {
-
+    private void publicarPostagem()
+    {
         abrirDialogCarregamento("Salvando Postagem");
 
         Postagem postagem = new Postagem();
+
         postagem.setIdUsuario(idUsuarioLogado);
         postagem.setDescricao(textDescricaoFiltro.getText().toString());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         imagemFiltro.compress(Bitmap.CompressFormat.JPEG,70, baos);
+
         byte[] dadosImg = baos.toByteArray();
 
         StorageReference storageRef = ConfigFireBase.getStorage();
+
         final StorageReference imagemRef = storageRef
-                .child("imagens")
-                .child("postagens")
-                .child(postagem.getId() + ".jpeg");
+            .child("imagens")
+            .child("postagens")
+            .child(postagem.getId() + ".jpeg");
 
         UploadTask uploadTask = imagemRef.putBytes(dadosImg);
+
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(
+            public void onFailure(@NonNull Exception e)
+            {
+                Toast
+                    .makeText(
                         FiltroActivity.this,
                         "Erro ao salvar a Imagem, tente novamente.",
                         Toast.LENGTH_SHORT
-                ).show();
+                    )
+                    .show();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+            {
                 imagemRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
+                    public void onComplete(@NonNull Task<Uri> task)
+                    {
                         Uri url = task.getResult();
+
                         postagem.setCaminhoFoto(url.toString());
 
                         int qtdePostagens = usuarioLogado.getPostagens() + 1;
+
                         usuarioLogado.setPostagens(qtdePostagens);
                         usuarioLogado.atualizarQtdePostagens();
 
-                        if (postagem.salvar(seguidoresSnapShot)){
-
-
-                            Toast.makeText(
+                        if ( postagem.salvar(seguidoresSnapShot) )
+                        {
+                            Toast
+                                .makeText(
                                     FiltroActivity.this,
                                     "Sucesso ao salvar postagem.",
                                     Toast.LENGTH_SHORT
-                            ).show();
+                                )
+                                .show();
+
                             dialog.cancel();
+
                             finish();
                         }
                     }
                 });
-
             }
         });
     }

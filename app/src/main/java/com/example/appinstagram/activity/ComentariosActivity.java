@@ -7,15 +7,22 @@ import android.os.Bundle;
 
 import com.example.appinstagram.R;
 
-public class ComentariosActivity extends AppCompatActivity {
+/**
+ *
+ */
+public class ComentariosActivity extends AppCompatActivity
+{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_comentarios);
 
         Toolbar t = findViewById(R.id.toolbarPrincipal);
         t.setTitle("Comentários");
+
         setSupportActionBar(t);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -23,7 +30,8 @@ public class ComentariosActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public boolean onSupportNavigateUp()
+    {
         return false;
     }
 }

@@ -35,7 +35,11 @@ import java.io.ByteArrayOutputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditarPerfilActivity extends AppCompatActivity {
+/**
+ *
+ */
+public class EditarPerfilActivity extends AppCompatActivity
+{
 
     private CircleImageView imageEditarPerfil;
     private TextView textAlterarFoto;
@@ -44,16 +48,19 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private Usuario userLoggado;
     private StorageReference storageRef;
     private String identificadorUsuario;
+
     private static final int SELECAO_GALERIA = 200;
 
-    private String[] permissoes_necessarias = new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-
+    private String[] permissoes_necessarias = new String[]
+    {
+        Manifest.permission.READ_EXTERNAL_STORAGE
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_editar_perfil);
 
         Permissao.validarPermissoes(permissoes_necessarias, this, 1);
@@ -63,7 +70,9 @@ public class EditarPerfilActivity extends AppCompatActivity {
         identificadorUsuario = UsuarioFirebase.getID();
 
         Toolbar t = findViewById(R.id.toolbarPrincipal);
+
         t.setTitle("Editar Perfil");
+
         setSupportActionBar(t);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -78,21 +87,28 @@ public class EditarPerfilActivity extends AppCompatActivity {
         editEmailPerfil.setFocusable(false);
 
         FirebaseUser usuarioPerfil = UsuarioFirebase.getCurrentUser();
+
         editNomePerfil.setText(usuarioPerfil.getDisplayName().toUpperCase());
         editEmailPerfil.setText(usuarioPerfil.getEmail());
 
         Uri url = usuarioPerfil.getPhotoUrl();
-        if (url != null){
-            Glide.with(EditarPerfilActivity.this)
-                    .load(url)
-                    .into(imageEditarPerfil);
-        }else
+
+        if ( url != null )
+        {
+            Glide
+                .with(EditarPerfilActivity.this)
+                .load(url)
+                .into(imageEditarPerfil);
+        }
+        else
             imageEditarPerfil.setImageResource(R.drawable.avatar);
 
         buttonSalvarAlteracoes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 String nomeAtualizado = editNomePerfil.getText().toString();
+
                 UsuarioFirebase.atualizarNomeUsuario(nomeAtualizado);
                 userLoggado.setNome(nomeAtualizado);
                 userLoggado.atualizar();
@@ -103,10 +119,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         textAlterarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                if(i.resolveActivity(getPackageManager()) != null) {
+                if ( i.resolveActivity(getPackageManager()) != null )
+                {
                     startActivityForResult(i, SELECAO_GALERIA);
                 }
             }
@@ -117,71 +135,102 @@ public class EditarPerfilActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
+        if ( resultCode == RESULT_OK )
+        {
             Bitmap img = null;
-            try {
-                switch (requestCode){
+
+            try
+            {
+                switch ( requestCode )
+                {
                     case SELECAO_GALERIA:
                         Uri local = data.getData();
                         img = MediaStore.Images.Media.getBitmap(getContentResolver(), local);
                         break;
                 }
 
-                if (img != null){
+                if ( img != null )
+                {
                     imageEditarPerfil.setImageBitmap(img);
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
                     img.compress(Bitmap.CompressFormat.JPEG,70, baos);
+
                     byte[] dadosImg = baos.toByteArray();
 
                     StorageReference imgRef = storageRef
                             .child("imagens")
                             .child("perfil")
-                            .child( identificadorUsuario +".jpeg");
+                            .child( identificadorUsuario + ".jpeg");
+
                     UploadTask uploadTask = imgRef.putBytes(dadosImg);
+
                     uploadTask.addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(EditarPerfilActivity.this,
+                        public void onFailure(@NonNull Exception e)
+                        {
+                            Toast
+                                .makeText(
+                                    EditarPerfilActivity.this,
                                     "Erro ao fazer upload da Imagem.",
                                     Toast.LENGTH_SHORT
-                            ).show();
+                                )
+                                .show();
                         }
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                        {
                             imgRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
+                                public void onComplete(@NonNull Task<Uri> task)
+                                {
                                     Uri url = task.getResult();
+
                                     atualizarFotoUsuario(url);
                                 }
                             });
 
-                            Toast.makeText(EditarPerfilActivity.this,
+                            Toast
+                                .makeText(
+                                    EditarPerfilActivity.this,
                                     "Sucesso ao fazer upload da Imagem.",
                                     Toast.LENGTH_SHORT
-                            ).show();
+                                )
+                                .show();
                         }
                     });
                 }
-            }catch (Exception e){
+            }
+            catch ( Exception e )
+            {
                 e.printStackTrace();
             }
         }
     }
 
-    private void atualizarFotoUsuario(Uri url) {
+    private void atualizarFotoUsuario(Uri url)
+    {
         UsuarioFirebase.atualizarFotoUsuario(url);
+
         userLoggado.setCaminhoFoto(url.toString());
         userLoggado.atualizar();
 
-        Toast.makeText(EditarPerfilActivity.this, "Foto de Perfil atualizada.", Toast.LENGTH_SHORT).show();
+        Toast
+            .makeText(
+                EditarPerfilActivity.this,
+                "Foto de Perfil atualizada.",
+                Toast.LENGTH_SHORT
+            )
+            .show();
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
+    public boolean onSupportNavigateUp()
+    {
         finish();
+
         return false;
     }
 }

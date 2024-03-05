@@ -24,14 +24,25 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewInner;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ *
+ */
+public class MainActivity extends AppCompatActivity
+{
+
     private FirebaseAuth auth;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         Toolbar t = findViewById(R.id.toolbarPrincipal);
+
         t.setTitle("Instagram");
+
         setSupportActionBar(t);
 
         auth = ConfigFireBase.getFireBaseAuth();
@@ -44,32 +55,38 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.viewPager, new FeedFragment()).commit();
     }
 
-    private void configBottomNavigationView(){
+    private void configBottomNavigationView()
+    {
         BottomNavigationViewEx bottom = findViewById(R.id.bottomNavigation);
+
         bottom.enableAnimation(true);
         bottom.enableItemShiftingMode(true);
         bottom.enableShiftingMode(false);
         bottom.setTextVisibility(true);
 
-        //Habilitar a Navegação:
+        // Habilitar a Navegação:
         habilitNavigation(bottom);
 
         /*
             Configurar item selecionado inicialmente:
+
             Menu menu = bottom.getMenu();
             MenuItem item = menu.getItem(1);
             item.setChecked(true);
         */
     }
 
-    private void habilitNavigation(BottomNavigationViewEx viewEx){
+    private void habilitNavigation(BottomNavigationViewEx viewEx)
+    {
         viewEx.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item)
+            {
                 FragmentManager fragment = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragment.beginTransaction();
 
-                switch (item.getItemId()){
+                switch ( item.getItemId() )
+                {
                     case R.id.ic_home:
                         fragmentTransaction.replace(R.id.viewPager, new FeedFragment()).commit();
                         return true;
@@ -83,22 +100,27 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.replace(R.id.viewPager, new PerfilFragment()).commit();
                         return true;
                 }
+
                 return false;
             }
         });
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
+
         inflater.inflate(R.menu.menu_main, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        switch ( item.getItemId() )
+        {
             case R.id.menu_sair:
                 deslogarUser();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
@@ -108,10 +130,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void deslogarUser(){
-        try{
+    private void deslogarUser()
+    {
+        try
+        {
             auth.signOut();
-        }catch (Exception e){
+        }
+        catch ( Exception e )
+        {
             e.printStackTrace();
         }
     }
