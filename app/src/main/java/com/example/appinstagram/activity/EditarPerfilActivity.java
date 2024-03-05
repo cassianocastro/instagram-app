@@ -41,6 +41,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditarPerfilActivity extends AppCompatActivity
 {
 
+    static private final int SELECAO_GALERIA = 200;
+
     private CircleImageView imageEditarPerfil;
     private TextView textAlterarFoto;
     private TextInputEditText editNomePerfil, editEmailPerfil;
@@ -48,8 +50,6 @@ public class EditarPerfilActivity extends AppCompatActivity
     private Usuario userLoggado;
     private StorageReference storageRef;
     private String identificadorUsuario;
-
-    private static final int SELECAO_GALERIA = 200;
 
     private String[] permissoes_necessarias = new String[]
     {
@@ -103,36 +103,43 @@ public class EditarPerfilActivity extends AppCompatActivity
         else
             imageEditarPerfil.setImageResource(R.drawable.avatar);
 
-        buttonSalvarAlteracoes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
+        buttonSalvarAlteracoes.setOnClickListener(
+            new View.OnClickListener()
             {
-                String nomeAtualizado = editNomePerfil.getText().toString();
-
-                UsuarioFirebase.atualizarNomeUsuario(nomeAtualizado);
-                userLoggado.setNome(nomeAtualizado);
-                userLoggado.atualizar();
-
-                Toast.makeText(EditarPerfilActivity.this, "Dados atualizados.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        textAlterarFoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                if ( i.resolveActivity(getPackageManager()) != null )
+                @Override
+                public void onClick(View v)
                 {
-                    startActivityForResult(i, SELECAO_GALERIA);
+                    String nomeAtualizado = editNomePerfil.getText().toString();
+
+                    UsuarioFirebase.atualizarNomeUsuario(nomeAtualizado);
+                    userLoggado.setNome(nomeAtualizado);
+                    userLoggado.atualizar();
+
+                    Toast.makeText(EditarPerfilActivity.this, "Dados atualizados.", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        );
+
+        textAlterarFoto.setOnClickListener(
+            new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                    if ( i.resolveActivity(getPackageManager()) != null )
+                    {
+                        startActivityForResult(i, SELECAO_GALERIA);
+                    }
+                }
+            }
+        );
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         if ( resultCode == RESULT_OK )
@@ -160,47 +167,56 @@ public class EditarPerfilActivity extends AppCompatActivity
                     byte[] dadosImg = baos.toByteArray();
 
                     StorageReference imgRef = storageRef
-                            .child("imagens")
-                            .child("perfil")
-                            .child( identificadorUsuario + ".jpeg");
+                        .child("imagens")
+                        .child("perfil")
+                        .child( identificadorUsuario + ".jpeg");
 
                     UploadTask uploadTask = imgRef.putBytes(dadosImg);
 
-                    uploadTask.addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e)
+                    uploadTask.addOnFailureListener(
+                        new OnFailureListener()
                         {
-                            Toast
-                                .makeText(
-                                    EditarPerfilActivity.this,
-                                    "Erro ao fazer upload da Imagem.",
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show();
+                            @Override
+                            public void onFailure(@NonNull Exception e)
+                            {
+                                Toast
+                                    .makeText(
+                                        EditarPerfilActivity.this,
+                                        "Erro ao fazer upload da Imagem.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show();
+                            }
                         }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                    ).addOnSuccessListener(
+                        new OnSuccessListener<UploadTask.TaskSnapshot>()
                         {
-                            imgRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task)
-                                {
-                                    Uri url = task.getResult();
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                            {
+                                imgRef.getDownloadUrl().addOnCompleteListener(
+                                    new OnCompleteListener<Uri>()
+                                    {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task)
+                                        {
+                                            Uri url = task.getResult();
 
-                                    atualizarFotoUsuario(url);
-                                }
-                            });
+                                            atualizarFotoUsuario(url);
+                                        }
+                                    }
+                                );
 
-                            Toast
-                                .makeText(
-                                    EditarPerfilActivity.this,
-                                    "Sucesso ao fazer upload da Imagem.",
-                                    Toast.LENGTH_SHORT
-                                )
-                                .show();
+                                Toast
+                                    .makeText(
+                                        EditarPerfilActivity.this,
+                                        "Sucesso ao fazer upload da Imagem.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show();
+                            }
                         }
-                    });
+                    );
                 }
             }
             catch ( Exception e )
