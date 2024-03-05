@@ -33,116 +33,145 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder>{
+/**
+ *
+ */
+public class AdapterFeed extends RecyclerView.Adapter<AdapterFeed.MyViewHolder>
+{
 
     private List<Feed> listaFeed;
     private Context context;
 
-    public AdapterFeed(List<Feed> listaFeed, Context context) {
+    public AdapterFeed(List<Feed> listaFeed, Context context)
+    {
         this.listaFeed = listaFeed;
-        this.context = context;
+        this.context   = context;
     }
 
     @NonNull
     @NotNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        View itemLista = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_feed, parent,false);
+    public MyViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType)
+    {
+        View itemLista = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_feed, parent, false);
+
         return new AdapterFeed.MyViewHolder(itemLista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull @NotNull AdapterFeed.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull @NotNull AdapterFeed.MyViewHolder holder, int position)
+    {
         Feed feed = listaFeed.get(position);
         Usuario usuarioLogado = UsuarioFirebase.getDadosUserLogged();
-
 
         Uri uriFotoUsuario  = Uri.parse(feed.getFotoUsuario());
         Uri uriFotoPostagem = Uri.parse(feed.getFotoPostagem());
 
         Glide
-                .with(context)
-                .load(uriFotoUsuario)
-                .into(holder.fotoPerfil);
+            .with(context)
+            .load(uriFotoUsuario)
+            .into(holder.fotoPerfil);
         Glide
-                .with(context)
-                .load(uriFotoPostagem)
-                .into(holder.fotoPostagem);
+            .with(context)
+            .load(uriFotoPostagem)
+            .into(holder.fotoPostagem);
 
         holder.descricao.setText(feed.getDescricao());
         holder.nome.setText(feed.getNomeUsuario());
 
         holder.visualizarComentario.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(context, ComentariosActivity.class);
-                        i.putExtra("idPostagem", feed.getId());
-                        context.startActivity(i);
-                    }
+            new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    Intent i = new Intent(context, ComentariosActivity.class);
+
+                    i.putExtra("idPostagem", feed.getId());
+
+                    context.startActivity(i);
                 }
+            }
         );
 
         DatabaseReference curtidasRef = ConfigFireBase
-                .getFireBaseDataBase()
-                .child("postagens-curtidas")
-                .child( feed.getId());
+            .getFireBaseDataBase()
+            .child("postagens-curtidas")
+            .child(feed.getId());
+
         curtidasRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        int qtdCurtidas = 0;
-                        if (snapshot.hasChild("qtdCurtidas")){
-                            PostagemCurtida postagemCurtida = snapshot.getValue(PostagemCurtida.class);
-                            qtdCurtidas = postagemCurtida.getQtdCurtidas();
-                        }
+            new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                {
+                    int qtdCurtidas = 0;
 
-                        if (snapshot.hasChild(usuarioLogado.getId())){
-                            holder.likeButton.setLiked(true);
-                        }else{
-                            holder.likeButton.setLiked(false);
-                        }
-
-                        PostagemCurtida curtida = new PostagemCurtida();
-                        curtida.setFeed(feed);
-                        curtida.setUsuario( usuarioLogado );
-                        curtida.setQtdCurtidas(qtdCurtidas);
-                        holder.likeButton.setOnLikeListener(new OnLikeListener() {
-                            @Override
-                            public void liked(LikeButton likeButton) {
-                                curtida.salvar();
-                                holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
-                            }
-
-                            @Override
-                            public void unLiked(LikeButton likeButton) {
-                                curtida.remover();
-                                holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
-                            }
-                        });
-                        holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
+                    if ( snapshot.hasChild("qtdCurtidas") )
+                    {
+                        PostagemCurtida postagemCurtida = snapshot.getValue(PostagemCurtida.class);
+                        qtdCurtidas = postagemCurtida.getQtdCurtidas();
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
+                    if ( snapshot.hasChild(usuarioLogado.getId()) )
+                    {
+                        holder.likeButton.setLiked(true);
                     }
+                    else
+                    {
+                        holder.likeButton.setLiked(false);
+                    }
+
+                    PostagemCurtida curtida = new PostagemCurtida();
+
+                    curtida.setFeed(feed);
+                    curtida.setUsuario(usuarioLogado);
+                    curtida.setQtdCurtidas(qtdCurtidas);
+
+                    holder.likeButton.setOnLikeListener(new OnLikeListener()
+                    {
+                        @Override
+                        public void liked(LikeButton likeButton)
+                        {
+                            curtida.salvar();
+                            holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
+                        }
+
+                        @Override
+                        public void unLiked(LikeButton likeButton)
+                        {
+                            curtida.remover();
+                            holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
+                        }
+                    });
+
+                    holder.qtdCurtidas.setText(curtida.getQtdCurtidas() + "curtidas");
                 }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error)
+                {
+
+                }
+            }
         );
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return listaFeed.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder
+    {
         CircleImageView fotoPerfil;
         TextView nome, descricao, qtdCurtidas;
         ImageView fotoPostagem, visualizarComentario;
         LikeButton likeButton;
 
-        public MyViewHolder(View itemView){
+        public MyViewHolder(View itemView)
+        {
             super(itemView);
 
             fotoPerfil   = itemView.findViewById(R.id.imagePerfilPostagem);

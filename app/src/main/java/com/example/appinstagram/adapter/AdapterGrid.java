@@ -19,67 +19,87 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.List;
 
-public class AdapterGrid extends ArrayAdapter<String> {
+/**
+ *
+ */
+public class AdapterGrid extends ArrayAdapter<String>
+{
 
     private Context context;
     private int layoutResource;
     private List<String> urlFotos;
 
-    public AdapterGrid(@NonNull Context context, int resource, @NonNull List<String> objects) {
+    public AdapterGrid(@NonNull Context context, int resource, @NonNull List<String> objects)
+    {
         super(context, resource, objects);
-        this.context = context;
+
+        this.context        = context;
         this.layoutResource = resource;
-        this.urlFotos = objects;
+        this.urlFotos       = objects;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent)
+    {
         ViewHolder viewHolder;
 
-        if (convertView != null){
+        if ( convertView != null )
+        {
             viewHolder = new ViewHolder();
+
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView             = inflater.inflate(layoutResource, parent, false);
             viewHolder.progressBar  = convertView.findViewById(R.id.progressGridPerfil);
             viewHolder.imageView    = convertView.findViewById(R.id.imageGridPerfil);
+
             convertView.setTag(viewHolder);
-        }else{
+        }
+        else
+        {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
         String urlImagem = getItem(position);
         ImageLoader imageLoader = ImageLoader.getInstance();
+
         imageLoader.displayImage(
-                urlImagem,
-                viewHolder.imageView,
-                new ImageLoadingListener() {
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-                        viewHolder.progressBar.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                        viewHolder.progressBar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        viewHolder.progressBar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String imageUri, View view) {
-                        viewHolder.progressBar.setVisibility(View.GONE);
-                    }
+            urlImagem,
+            viewHolder.imageView,
+            new ImageLoadingListener()
+            {
+                @Override
+                public void onLoadingStarted(String imageUri, View view)
+                {
+                    viewHolder.progressBar.setVisibility(View.VISIBLE);
                 }
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason)
+                {
+                    viewHolder.progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
+                {
+                    viewHolder.progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view)
+                {
+                    viewHolder.progressBar.setVisibility(View.GONE);
+                }
+            }
         );
+
         return convertView;
     }
 
-    public class ViewHolder{
+    public class ViewHolder
+    {
         ImageView imageView;
         ProgressBar progressBar;
-
     }
 }
