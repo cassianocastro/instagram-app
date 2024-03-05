@@ -23,7 +23,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
-public class CadastroActivity extends AppCompatActivity {
+/**
+ *
+ */
+public class CadastroActivity extends AppCompatActivity
+{
+
     private EditText campoUsuario, campoEmail, campoSenha;
     private Button buttonCadastrar;
     private ProgressBar progressBar;
@@ -32,8 +37,10 @@ public class CadastroActivity extends AppCompatActivity {
     private FirebaseAuth auth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_cadastro);
 
         this.campoUsuario    = findViewById(R.id.editCadastroNome);
@@ -46,73 +53,168 @@ public class CadastroActivity extends AppCompatActivity {
         this.progressBar    .setVisibility(View.GONE);
         this.buttonCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 String nome  = campoUsuario.getText().toString();
                 String email = campoEmail  .getText().toString();
                 String senha = campoSenha  .getText().toString();
 
                 if ( nome.isEmpty() || email.isEmpty() || senha.isEmpty())
-                    Toast.makeText(
+                {
+                    Toast
+                        .makeText(
                             getApplicationContext(),
                             "Preencha todos os campos.",
                             Toast.LENGTH_SHORT
-                    ).show();
-                else{
+                        )
+                        .show();
+                }
+                else
+                {
                     usuario = new Usuario();
+
                     usuario.setNome(nome);
                     usuario.setEmail(email);
                     usuario.setSenha(senha);
+
                     cadastrar( usuario );
                 }
             }
         });
     }
 
-    public void cadastrar(Usuario usuario){
+    public void cadastrar(Usuario usuario)
+    {
         this.progressBar.setVisibility(View.VISIBLE);
         this.auth = ConfigFireBase.getFireBaseAuth();
         this.auth
+            .createUserWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
+            .addOnCompleteListener(
+                this,
                 .createUserWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
                 .addOnCompleteListener(
-                        this,
-                        new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                String msg = null;
-                                if ( ! task.isSuccessful() ){
-                                    try{
-                                        throw task.getException();
-                                    }catch(FirebaseAuthWeakPasswordException e){
-                                        msg = "Digite uma senha mais forte.";
-                                    }catch (FirebaseAuthInvalidCredentialsException e){
-                                        msg = "Digite um e-mail válido.";
-                                    }catch (FirebaseAuthUserCollisionException e){
-                                        msg = "Conta já cadastrada.";
-                                    }catch (Exception e){
-                                        msg = "Ao cadastrar usuário" + e.getMessage();
-                                        e.printStackTrace();
-                                    }
-                                }else{
-                                    try{
-                                        String u = task.getResult().getUser().getUid();
-                                        usuario.setId(u);
-                                        usuario.salvar();
-                                        UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
-                                        msg = "Cadastro realizado.";
-                                        startActivity( new Intent(getApplicationContext(), MainActivity.class));
-                                        finish();
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                    }
+                    this,
+                    new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task)
+                        {
+                            progressBar.setVisibility(View.GONE);
+
+                            String msg = null;
+
+                            if ( ! task.isSuccessful() )
+                            {
+                                try
+                                {
+                                    throw task.getException();
                                 }
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        msg,
-                                        Toast.LENGTH_SHORT
-                                ).show();
+                                catch(FirebaseAuthWeakPasswordException e)
+                                {
+                                    msg = "Digite uma senha mais forte.";
+                                }
+                                catch (FirebaseAuthInvalidCredentialsException e)
+                                {
+                                    msg = "Digite um e-mail válido.";
+                                }
+                                catch (FirebaseAuthUserCollisionException e)
+                                {
+                                    msg = "Conta já cadastrada.";
+                                }
+                                catch (Exception e)
+                                {
+                                    msg = "Ao cadastrar usuário" + e.getMessage();
+                                    e.printStackTrace();
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    String u = task.getResult().getUser().getUid();
+                                    usuario.setId(u);
+                                    usuario.salvar();
+                                    UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
+                                    msg = "Cadastro realizado.";
+                                    startActivity( new Intent(getApplicationContext(), MainActivity.class));
+                                    finish();
+                                }
+                                catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                }
+                            }
+                            Toast
+                                .makeText(
+                                    getApplicationContext(),
+                                    msg,
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show();
+                        }
+                    }
+                );
+                new OnCompleteListener<AuthResult>()
+                {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        progressBar.setVisibility(View.GONE);
+
+                        String msg = null;
+
+                        if ( ! task.isSuccessful() )
+                        {
+                            try
+                            {
+                                throw task.getException();
+                            }
+                            catch( FirebaseAuthWeakPasswordException e )
+                            {
+                                msg = "Digite uma senha mais forte.";
+                            }
+                            catch ( FirebaseAuthInvalidCredentialsException e )
+                            {
+                                msg = "Digite um e-mail válido.";
+                            }
+                            catch ( FirebaseAuthUserCollisionException e )
+                            {
+                                msg = "Conta já cadastrada.";
+                            }
+                            catch ( Exception e )
+                            {
+                                msg = "Ao cadastrar usuário" + e.getMessage();
+                                e.printStackTrace();
                             }
                         }
-                );
+                        else
+                        {
+                            try
+                            {
+                                String u = task.getResult().getUser().getUid();
+
+                                usuario.setId(u);
+                                usuario.salvar();
+
+                                UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
+                                msg = "Cadastro realizado.";
+
+                                startActivity( new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            }
+                            catch ( Exception e )
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        Toast
+                            .makeText(
+                                getApplicationContext(),
+                                msg,
+                                Toast.LENGTH_SHORT
+                            )
+                            .show();
+                    }
+                }
+            );
     }
 }
