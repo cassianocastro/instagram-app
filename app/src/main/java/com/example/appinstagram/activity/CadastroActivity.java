@@ -59,7 +59,7 @@ public class CadastroActivity extends AppCompatActivity
                 String email = campoEmail  .getText().toString();
                 String senha = campoSenha  .getText().toString();
 
-                if ( nome.isEmpty() || email.isEmpty() || senha.isEmpty())
+                if ( nome.isEmpty() || email.isEmpty() || senha.isEmpty() )
                 {
                     Toast
                         .makeText(
@@ -77,7 +77,7 @@ public class CadastroActivity extends AppCompatActivity
                     usuario.setEmail(email);
                     usuario.setSenha(senha);
 
-                    cadastrar( usuario );
+                    cadastrar(usuario);
                 }
             }
         });
@@ -88,10 +88,10 @@ public class CadastroActivity extends AppCompatActivity
         this.progressBar.setVisibility(View.VISIBLE);
         this.auth = ConfigFireBase.getFireBaseAuth();
         this.auth
-            .createUserWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
+            .createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
             .addOnCompleteListener(
                 this,
-                .createUserWithEmailAndPassword(usuario.getEmail(),usuario.getSenha())
+                .createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
                 .addOnCompleteListener(
                     this,
                     new OnCompleteListener<AuthResult>() {
@@ -108,19 +108,19 @@ public class CadastroActivity extends AppCompatActivity
                                 {
                                     throw task.getException();
                                 }
-                                catch(FirebaseAuthWeakPasswordException e)
+                                catch( FirebaseAuthWeakPasswordException e )
                                 {
                                     msg = "Digite uma senha mais forte.";
                                 }
-                                catch (FirebaseAuthInvalidCredentialsException e)
+                                catch ( FirebaseAuthInvalidCredentialsException e )
                                 {
                                     msg = "Digite um e-mail válido.";
                                 }
-                                catch (FirebaseAuthUserCollisionException e)
+                                catch ( FirebaseAuthUserCollisionException e )
                                 {
                                     msg = "Conta já cadastrada.";
                                 }
-                                catch (Exception e)
+                                catch ( Exception e )
                                 {
                                     msg = "Ao cadastrar usuário" + e.getMessage();
                                     e.printStackTrace();
@@ -131,14 +131,17 @@ public class CadastroActivity extends AppCompatActivity
                                 try
                                 {
                                     String u = task.getResult().getUser().getUid();
+
                                     usuario.setId(u);
                                     usuario.salvar();
+
                                     UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
                                     msg = "Cadastro realizado.";
-                                    startActivity( new Intent(getApplicationContext(), MainActivity.class));
+
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     finish();
                                 }
-                                catch (Exception e)
+                                catch ( Exception e )
                                 {
                                     e.printStackTrace();
                                 }
@@ -198,7 +201,7 @@ public class CadastroActivity extends AppCompatActivity
                                 UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
                                 msg = "Cadastro realizado.";
 
-                                startActivity( new Intent(getApplicationContext(), MainActivity.class));
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
                             catch ( Exception e )
