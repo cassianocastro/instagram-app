@@ -40,7 +40,12 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class PerfilFragment extends Fragment {
+/**
+ *
+ */
+public class PerfilFragment extends Fragment
+{
+
     private ProgressBar progressBar;
     private CircleImageView imagePerfil;
     private GridView gridViewPerfil;
@@ -55,13 +60,14 @@ public class PerfilFragment extends Fragment {
     private ValueEventListener valueEventListenerPerfil;
     private AdapterGrid adapterGrid;
 
-    public PerfilFragment() {
+    public PerfilFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         View view           = inflater.inflate(R.layout.fragment_perfil, container, false);
 
@@ -69,9 +75,8 @@ public class PerfilFragment extends Fragment {
         firebaseRef         = ConfigFireBase.getFireBaseDataBase();
         usuarioRef          = firebaseRef.child("usuarios");
         postagensUsuarioRef = ConfigFireBase.getFireBaseDataBase()
-                .child("postagens")
-                .child(usuarioLogado.getId());
-
+            .child("postagens")
+            .child(usuarioLogado.getId());
 
         progressBar      = view.findViewById(R.id.progressBarPerfil);
         imagePerfil      = view.findViewById(R.id.imageEditarPerfil);
@@ -82,18 +87,22 @@ public class PerfilFragment extends Fragment {
         textSeguindo     = view.findViewById(R.id.textSeguindo);
 
         String caminhoFoto = usuarioLogado.getCaminhoFoto();
-        if (caminhoFoto != null){
+
+        if ( caminhoFoto != null )
+        {
             Uri url = Uri.parse(caminhoFoto);
             Glide
-                    .with(getActivity())
-                    .load(url)
-                    .into(imagePerfil);
+                .with(getActivity())
+                .load(url)
+                .into(imagePerfil);
         }
 
         buttonAcaoPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent i = new Intent(getActivity(), EditarPerfilActivity.class);
+
                 startActivity(i);
             }
         });
@@ -104,83 +113,104 @@ public class PerfilFragment extends Fragment {
         return view;
     }
 
-    public void carregarFotosPostagem(){
+    public void carregarFotosPostagem()
+    {
         postagensUsuarioRef.addListenerForSingleValueEvent(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        int tamanhoGrid   = getResources().getDisplayMetrics().widthPixels;
-                        int tamanhoImagem = tamanhoGrid / 3;
-                        gridViewPerfil.setColumnWidth(tamanhoImagem);
+            new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                {
+                    int tamanhoGrid   = getResources().getDisplayMetrics().widthPixels;
+                    int tamanhoImagem = tamanhoGrid / 3;
 
-                        List<String> urlFotos = new ArrayList<>();
-                        for (DataSnapshot ds : snapshot.getChildren()){
-                            Postagem postagem = ds.getValue(Postagem.class);
-                            urlFotos.add(postagem.getCaminhoFoto());
-                        }
-                        int qtdePostagens = urlFotos.size();
-                        textPublicacoes.setText(String.valueOf(qtdePostagens));
-                        adapterGrid = new AdapterGrid(
-                                getActivity(),
-                                R.layout.grid_postagem,
-                                urlFotos
-                        );
-                        gridViewPerfil.setAdapter(adapterGrid);
+                    gridViewPerfil.setColumnWidth(tamanhoImagem);
+
+                    List<String> urlFotos = new ArrayList<>();
+
+                    for ( DataSnapshot ds : snapshot.getChildren() )
+                    {
+                        Postagem postagem = ds.getValue(Postagem.class);
+                        urlFotos.add(postagem.getCaminhoFoto());
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                    int qtdePostagens = urlFotos.size();
 
-                    }
+                    textPublicacoes.setText(String.valueOf(qtdePostagens));
+
+                    adapterGrid = new AdapterGrid(
+                        getActivity(),
+                        R.layout.grid_postagem,
+                        urlFotos
+                    );
+
+                    gridViewPerfil.setAdapter(adapterGrid);
                 }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error)
+                {
+
+                }
+            }
         );
     }
 
-    private void inicializarImageLoader(){
+    private void inicializarImageLoader()
+    {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration
-                .Builder(getActivity())
-                .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
-                .memoryCacheSize(2 * 1024 * 1024)
-                .diskCacheSize(50 * 1024 * 1024)
-                .diskCacheFileCount(100)
-                .diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
-                .build();
+            .Builder(getActivity())
+            .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
+            .memoryCacheSize(2 * 1024 * 1024)
+            .diskCacheSize(50 * 1024 * 1024)
+            .diskCacheFileCount(100)
+            .diskCacheFileNameGenerator(new HashCodeFileNameGenerator())
+            .build();
+
         ImageLoader.getInstance().init(config);
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
 
         recuperarDadosUsuarioLogado();
     }
 
     @Override
-    public void onStop() {
+    public void onStop()
+    {
         super.onStop();
+
         usuarioLogadoRef.removeEventListener(valueEventListenerPerfil);
     }
 
-    private void recuperarDadosUsuarioLogado() {
+    private void recuperarDadosUsuarioLogado()
+    {
         usuarioLogadoRef         = usuarioRef.child(usuarioLogado.getId());
         valueEventListenerPerfil = usuarioLogadoRef.addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        Usuario usuario   = snapshot.getValue(Usuario.class);
-                        String postagens  = String.valueOf(usuario.getPostagens());
-                        String seguidores = String.valueOf(usuario.getSeguidores());
-                        String seguindo   = String.valueOf(usuario.getSeguindo());
-                        textPublicacoes.setText(postagens);
-                        textSeguidores .setText(seguidores);
-                        textSeguindo   .setText(seguindo);
-                    }
+            new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                {
+                    Usuario usuario   = snapshot.getValue(Usuario.class);
+                    String postagens  = String.valueOf(usuario.getPostagens());
+                    String seguidores = String.valueOf(usuario.getSeguidores());
+                    String seguindo   = String.valueOf(usuario.getSeguindo());
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                    }
+                    textPublicacoes.setText(postagens);
+                    textSeguidores .setText(seguidores);
+                    textSeguindo   .setText(seguindo);
                 }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error)
+                {
+
+                }
+            }
         );
     }
 }

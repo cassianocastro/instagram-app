@@ -31,7 +31,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PesquisaFragment extends Fragment {
+public class PesquisaFragment extends Fragment
+{
+
     private SearchView searchViewPesquisa;
     private RecyclerView recyclerPesquisa;
     private List<Usuario> listaUsuarios;
@@ -40,92 +42,128 @@ public class PesquisaFragment extends Fragment {
 
     private String idUsuarioLogado;
 
-    public PesquisaFragment() {
+    public PesquisaFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         View view          = inflater.inflate(R.layout.fragment_pesquisa, container, false);
+
         searchViewPesquisa = view.findViewById(R.id.searchViewPesquisa);
         recyclerPesquisa   = view.findViewById(R.id.recyclerPesquisa);
+
         listaUsuarios      = new ArrayList<>();
+
         databaseReference  = ConfigFireBase.getFireBaseDataBase().child("usuarios");
         idUsuarioLogado    = UsuarioFirebase.getID();
 
         recyclerPesquisa.setHasFixedSize(true);
         recyclerPesquisa.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         adapterPesquisa = new AdapterPesquisa(listaUsuarios, getActivity());
+
         recyclerPesquisa.setAdapter(adapterPesquisa);
 
         recyclerPesquisa.addOnItemTouchListener(new RecyclerItemClickListener(
-                getActivity(),
-                recyclerPesquisa,
-                new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Usuario usuarioSelecionado = listaUsuarios.get(position);
-                        Intent i =new Intent(getActivity(), PerfilAmigoActivity.class);
-                        i.putExtra("usuarioSelecionado", usuarioSelecionado);
-                        startActivity(i);
-                    }
+            getActivity(),
+            recyclerPesquisa,
+            new RecyclerItemClickListener.OnItemClickListener()
+            {
+                @Override
+                public void onItemClick(View view, int position)
+                {
+                    Usuario usuarioSelecionado = listaUsuarios.get(position);
+                    Intent i = new Intent(getActivity(), PerfilAmigoActivity.class);
 
-                    @Override
-                    public void onLongItemClick(View view, int position) {
+                    i.putExtra("usuarioSelecionado", usuarioSelecionado);
 
-                    }
-
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    }
+                    startActivity(i);
                 }
+
+                @Override
+                public void onLongItemClick(View view, int position)
+                {
+
+                }
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+
+                }
+            }
         ));
 
         searchViewPesquisa.setQueryHint("Buscar Usuários");
-        searchViewPesquisa.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+        searchViewPesquisa.setOnQueryTextListener(
+            new SearchView.OnQueryTextListener()
+            {
+                @Override
+                public boolean onQueryTextSubmit(String query)
+                {
+                    return false;
+                }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                String textoDigitado = newText.toUpperCase();
-                pesquisarUsuarios(textoDigitado);
-                return true;
+                @Override
+                public boolean onQueryTextChange(String newText)
+                {
+                    String textoDigitado = newText.toUpperCase();
+
+                    pesquisarUsuarios(textoDigitado);
+
+                    return true;
+                }
             }
-        });
+        );
+
         return view;
     }
 
-    private void pesquisarUsuarios(String textoDigitado) {
+    private void pesquisarUsuarios(String textoDigitado)
+    {
         listaUsuarios.clear();
-        if (textoDigitado.length() > 2){
-            Query query = databaseReference.orderByChild("nome")
-                    .startAt(textoDigitado)
-                    .endAt(textoDigitado + "\uf8ff");
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull @org.jetbrains.annotations.NotNull DataSnapshot snapshot) {
-                    listaUsuarios.clear();
-                    for (DataSnapshot ds: snapshot.getChildren()) {
-                        Usuario usuario = ds.getValue(Usuario.class);
-                        if (idUsuarioLogado.equals(usuario.getId())){
-                            continue;
+
+        if ( textoDigitado.length() > 2 )
+        {
+            Query query = databaseReference
+                .orderByChild("nome")
+                .startAt(textoDigitado)
+                .endAt(textoDigitado + "\uf8ff");
+
+            query.addListenerForSingleValueEvent(
+                new ValueEventListener()
+                {
+                    @Override
+                    public void onDataChange(@NonNull @org.jetbrains.annotations.NotNull DataSnapshot snapshot)
+                    {
+                        listaUsuarios.clear();
+
+                        for ( DataSnapshot ds : snapshot.getChildren() )
+                        {
+                            Usuario usuario = ds.getValue(Usuario.class);
+
+                            if ( idUsuarioLogado.equals(usuario.getId()) )
+                            {
+                                continue;
+                            }
+
+                            listaUsuarios.add(usuario);
                         }
-                        listaUsuarios.add(usuario);
+
+                        adapterPesquisa.notifyDataSetChanged();
                     }
-                    adapterPesquisa.notifyDataSetChanged();
-                }
 
-                @Override
-                public void onCancelled(@NonNull @org.jetbrains.annotations.NotNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull @org.jetbrains.annotations.NotNull DatabaseError error)
+                    {
 
+                    }
                 }
-            });
+            );
         }
     }
 }

@@ -28,8 +28,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
-public class FeedFragment extends Fragment {
+/**
+ *
+ */
+public class FeedFragment extends Fragment
+{
 
     private List<Feed> listaFeed;
     private RecyclerView recyclerFeed;
@@ -38,65 +41,74 @@ public class FeedFragment extends Fragment {
     private DatabaseReference feedRef;
     private String idUsuarioLogado;
 
-
-    public FeedFragment() {
+    public FeedFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
         idUsuarioLogado = UsuarioFirebase.getID();
         feedRef = ConfigFireBase
-                .getFireBaseDataBase()
-                .child("feed")
-                .child(idUsuarioLogado);
+            .getFireBaseDataBase()
+            .child("feed")
+            .child(idUsuarioLogado);
 
         listaFeed    = new ArrayList<>();
         adapterFeed  = new AdapterFeed(listaFeed, getActivity());
+
         recyclerFeed = view.findViewById(R.id.recyclerFeed);
 
         recyclerFeed.setHasFixedSize(true);
-        recyclerFeed.setLayoutManager(new LinearLayoutManager(
-                getActivity()
-        ));
+        recyclerFeed.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerFeed.setAdapter(adapterFeed);
+
         return view;
     }
 
-    private void listarFeed(){
+    private void listarFeed()
+    {
         valueEventListenerFeed = feedRef.addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds  : snapshot.getChildren()){
-
-                            listaFeed.add(ds.getValue(Feed.class));
-                        }
-                        Collections.reverse(listaFeed);
-                        adapterFeed.notifyDataSetChanged();
+            new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot)
+                {
+                    for ( DataSnapshot ds : snapshot.getChildren() )
+                    {
+                        listaFeed.add(ds.getValue(Feed.class));
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-                    }
+                    Collections.reverse(listaFeed);
+                    adapterFeed.notifyDataSetChanged();
                 }
+
+                @Override
+                public void onCancelled(@NonNull @NotNull DatabaseError error)
+                {
+
+                }
+            }
         );
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
+
         listarFeed();
     }
 
     @Override
-    public void onStop() {
+    public void onStop()
+    {
         super.onStop();
+
         feedRef.removeEventListener(valueEventListenerFeed);
     }
 }

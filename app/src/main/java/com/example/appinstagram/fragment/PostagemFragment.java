@@ -30,24 +30,31 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
-public class PostagemFragment extends Fragment {
+/**
+ *
+ */
+public class PostagemFragment extends Fragment
+{
 
     private Button buttonAbrirGaleria, buttonAbrirCamera;
+
     private static final int SELECAO_GALERIA = 200;
     private static final int SELECAO_CAMERA = 100;
 
-    private String[] permissoes_necessarias = new String[] {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+    private String[] permissoes_necessarias = new String[]
+    {
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.CAMERA
     };
 
-    public PostagemFragment() {
+    public PostagemFragment()
+    {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_postagem, container, false);
 
@@ -58,9 +65,12 @@ public class PostagemFragment extends Fragment {
 
         buttonAbrirCamera.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(i.resolveActivity(getActivity().getPackageManager()) != null){
+
+                if ( i.resolveActivity(getActivity().getPackageManager()) != null )
+                {
                     startActivityForResult(i, SELECAO_CAMERA);
                 }
             }
@@ -68,23 +78,33 @@ public class PostagemFragment extends Fragment {
 
         buttonAbrirGaleria.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if(i.resolveActivity(getActivity().getPackageManager()) != null){
+
+                if ( i.resolveActivity(getActivity().getPackageManager()) != null )
+                {
                     startActivityForResult(i, SELECAO_GALERIA);
                 }
             }
         });
+
         return view;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK){
+
+        if ( resultCode == getActivity().RESULT_OK )
+        {
             Bitmap img = null;
-            try {
-                switch (requestCode) {
+
+            try
+            {
+                switch ( requestCode )
+                {
                     case SELECAO_CAMERA:
                         img = (Bitmap) data.getExtras().get("data");
                         break;
@@ -93,16 +113,24 @@ public class PostagemFragment extends Fragment {
                         img = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), localImgSelecionada);
                         break;
                 }
-                if(img != null) {
+
+                if ( img != null )
+                {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
                     img.compress(Bitmap.CompressFormat.JPEG,70, baos);
+
                     byte[] dadosImg = baos.toByteArray();
 
                     Intent i = new Intent(getActivity(), FiltroActivity.class);
+
                     i.putExtra("fotoEscolhida", dadosImg);
+
                     startActivity(i);
                 }
-            }catch(Exception e) {
+            }
+            catch ( Exception e )
+            {
                 e.printStackTrace();
             }
         }
