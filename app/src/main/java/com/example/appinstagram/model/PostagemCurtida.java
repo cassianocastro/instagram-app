@@ -13,11 +13,11 @@ public class PostagemCurtida
 
     public Feed feed;
     public Usuario usuario;
-    public int qtdCurtidas = 0;
+    public int qtdCurtidas;
 
     public PostagemCurtida()
     {
-
+        this.qtdCurtidas = 0;
     }
 
     public void salvar()
