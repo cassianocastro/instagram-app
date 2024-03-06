@@ -14,11 +14,13 @@ import java.util.Map;
 public class Usuario implements Serializable
 {
     private String id, nome, email, senha, caminhoFoto;
-    private int seguidores = 0, seguindo = 0, postagens = 0;
+    private int seguidores, seguindo, postagens;
 
     public Usuario()
     {
-
+        this.seguidores = 0;
+        this.seguindo   = 0;
+        this.postagens  = 0;
     }
 
     public Usuario(String id, String nome, String email, String senha, String caminhoFoto)
@@ -28,12 +30,14 @@ public class Usuario implements Serializable
         this.email       = email;
         this.senha       = senha;
         this.caminhoFoto = caminhoFoto;
+
+        this();
     }
 
     public void salvar()
     {
         DatabaseReference fireDatabaseReference = ConfigFireBase.getFireBaseDataBase();
-        DatabaseReference usuariosReference     = fireDatabaseReference.child("usuarios").child(getId());
+        DatabaseReference usuariosReference     = fireDatabaseReference.child("usuarios").child(this.id);
 
         usuariosReference.setValue(this);
     }
@@ -41,7 +45,7 @@ public class Usuario implements Serializable
     public void atualizarQtdePostagens()
     {
         DatabaseReference firebaseref       = ConfigFireBase.getFireBaseDataBase();
-        DatabaseReference usuariosReference = firebaseref.child("usuarios").child(getId());
+        DatabaseReference usuariosReference = firebaseref.child("usuarios").child(this.id);
 
         HashMap<String, Object> userMap = new HashMap<>();
 
@@ -53,7 +57,7 @@ public class Usuario implements Serializable
     public void atualizar()
     {
         DatabaseReference firebaseref       = ConfigFireBase.getFireBaseDataBase();
-        DatabaseReference usuariosReference = firebaseref.child("usuarios").child(getId());
+        DatabaseReference usuariosReference = firebaseref.child("usuarios").child(this.id);
 
         usuariosReference.updateChildren(toMap());
     }
@@ -62,13 +66,13 @@ public class Usuario implements Serializable
     {
         HashMap<String, Object> userMap = new HashMap<>();
 
-        userMap.put("email", getEmail());
-        userMap.put("nome", getNome());
-        userMap.put("id", getId());
-        userMap.put("caminhoFoto", getCaminhoFoto());
-        userMap.put("seguidores", getSeguidores());
-        userMap.put("seguindo", getSeguindo());
-        userMap.put("postagens", getPostagens());
+        userMap.put("email", this.email);
+        userMap.put("nome", this.nome);
+        userMap.put("id", this.id);
+        userMap.put("caminhoFoto", this.caminhoFoto);
+        userMap.put("seguidores", this.seguidores);
+        userMap.put("seguindo", this.seguindo);
+        userMap.put("postagens", this.postagens);
 
         return userMap;
     }
